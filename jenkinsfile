@@ -1,59 +1,108 @@
 pipeline {
-    agent any
+  agent any
 
-    environment {
-        IMAGE_NAME = "nextjs-app:latest"
-        TERRAFORM_DIR = "terraform"
+  stages {
+
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
     }
 
-    stages {
-
-        stage('Checkout Code') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                sh '''
-                docker build -t $IMAGE_NAME .
-                '''
-            }
-        }
-
-        stage('Load Image into Minikube') {
-            steps {
-                sh '''
-                minikube image load $IMAGE_NAME
-                '''
-            }
-        }
-
-        stage('Terraform Init') {
-            steps {
-                dir(TERRAFORM_DIR) {
-                    sh 'terraform init'
-                }
-            }
-        }
-
-        stage('Terraform Apply') {
-            steps {
-                dir(TERRAFORM_DIR) {
-                    sh 'terraform apply -auto-approve'
-                }
-            }
-        }
-
-        stage('Verify Deployment') {
-            steps {
-                sh '''
-                kubectl get pods
-                kubectl get svc
-                kubectl get ingress
-                '''
-            }
-        }
+    stage('Build Docker Image') {
+      steps {
+        sh '''
+        docker build -t votingapp:latest .
+        '''
+      }
     }
+
+    stage('Load Image into Minikube') {
+      steps {
+        sh '''
+        minikube image load votingapp:latest
+        '''
+      }
+    }
+
+    stage('Terraform Init') {
+      steps {
+        dir('terraform') {
+          sh 'terraform init'
+        }
+      }
+    }
+
+    stage('Terraform Apply') {
+      steps {
+        dir('terraform') {
+          sh 'terraform apply -auto-approve'
+        }
+      }
+    }
+
+    stage('Verify') {
+      steps {
+        sh '''
+        kubectl get pods
+        kubectl get svc
+        kubectl get ingress
+        '''
+      }
+    }
+  }
+}
+pipeline {
+  agent any
+
+  stages {
+
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+
+    stage('Build Docker Image') {
+      steps {
+        sh '''
+        docker build -t votingapp:latest .
+        '''
+      }
+    }
+
+    stage('Load Image into Minikube') {
+      steps {
+        sh '''
+        minikube image load votingapp:latest
+        '''
+      }
+    }
+
+    stage('Terraform Init') {
+      steps {
+        dir('terraform') {
+          sh 'terraform init'
+        }
+      }
+    }
+
+    stage('Terraform Apply') {
+      steps {
+        dir('terraform') {
+          sh 'terraform apply -auto-approve'
+        }
+      }
+    }
+
+    stage('Verify') {
+      steps {
+        sh '''
+        kubectl get pods
+        kubectl get svc
+        kubectl get ingress
+        '''
+      }
+    }
+  }
 }
