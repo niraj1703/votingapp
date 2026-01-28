@@ -1,108 +1,90 @@
 pipeline {
-  agent any
+    agent any
 
-  stages {
-
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
+    environment {
+        KUBECONFIG = "/var/lib/jenkins/.kube/config"
     }
 
-    stage('Build Docker Image') {
-      steps {
-        sh '''
-        docker build -t votingapp:latest .
-        '''
-      }
-    }
-
-    stage('Load Image into Minikube') {
-      steps {
-        sh '''
-        minikube image load votingapp:latest
-        '''
-      }
-    }
-
-    stage('Terraform Init') {
-      steps {
-        dir('terraform') {
-          sh 'terraform init'
+    stages {
+        stage('Build Image') {
+            steps {
+                sh 'docker build -t votingapp:latest .'
+            }
         }
-      }
-    }
 
-    stage('Terraform Apply') {
-      steps {
-        dir('terraform') {
-          sh 'terraform apply -auto-approve'
+        stage('Load Image into Minikube') {
+            steps {
+                sh 'minikube image load votingapp:latest'
+            }
         }
-      }
-    }
 
-    stage('Verify') {
-      steps {
-        sh '''
-        kubectl get pods
-        kubectl get svc
-        kubectl get ingress
-        '''
-      }
+        stage('Terraform Init') {
+            steps {
+                dir('terraform') {
+                    sh 'terraform init'
+                }
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                dir('terraform') {
+                    sh 'terraform apply -auto-approve'
+                }
+            }
+        }
+
+        stage('Verify') {
+            steps {
+                sh 'kubectl get pods'
+                sh 'kubectl get svc'
+                sh 'kubectl get ingress'
+            }
+        }
     }
-  }
 }
 pipeline {
-  agent any
+    agent any
 
-  stages {
-
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
+    environment {
+        KUBECONFIG = "/var/lib/jenkins/.kube/config"
     }
 
-    stage('Build Docker Image') {
-      steps {
-        sh '''
-        docker build -t votingapp:latest .
-        '''
-      }
-    }
-
-    stage('Load Image into Minikube') {
-      steps {
-        sh '''
-        minikube image load votingapp:latest
-        '''
-      }
-    }
-
-    stage('Terraform Init') {
-      steps {
-        dir('terraform') {
-          sh 'terraform init'
+    stages {
+        stage('Build Image') {
+            steps {
+                sh 'docker build -t votingapp:latest .'
+            }
         }
-      }
-    }
 
-    stage('Terraform Apply') {
-      steps {
-        dir('terraform') {
-          sh 'terraform apply -auto-approve'
+        stage('Load Image into Minikube') {
+            steps {
+                sh 'minikube image load votingapp:latest'
+            }
         }
-      }
-    }
 
-    stage('Verify') {
-      steps {
-        sh '''
-        kubectl get pods
-        kubectl get svc
-        kubectl get ingress
-        '''
-      }
+        stage('Terraform Init') {
+            steps {
+                dir('terraform') {
+                    sh 'terraform init'
+                }
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                dir('terraform') {
+                    sh 'terraform apply -auto-approve'
+                }
+            }
+        }
+
+        stage('Verify') {
+            steps {
+                sh 'kubectl get pods'
+                sh 'kubectl get svc'
+                sh 'kubectl get ingress'
+            }
+        }
     }
-  }
 }
