@@ -8,13 +8,13 @@ pipeline {
     stages {
         stage('Build Image') {
             steps {
-                sh 'docker build -t votingapp:latest .'
+                sh 'docker build -t n969/votingapp:latest .'
             }
         }
 
-        stage('Load Image into Minikube') {
+        stage('Push Image to Docker Hub') {
             steps {
-                sh 'minikube image load votingapp:latest'
+                sh 'docker push n969/votingapp:latest'
             }
         }
 
