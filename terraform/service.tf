@@ -1,7 +1,7 @@
 resource "kubernetes_service" "app" {
   metadata {
     name = "votingapp"
-    namespace = kubernetes_namespace.app.metadata[0].name
+    namespace = kubernetes_namespace.voting.metadata[0].name
     labels = { 
       app = "votingapp"
     }

@@ -1,7 +1,7 @@
 resource "kubernetes_ingress_v1" "app" {
   metadata {
     name = "votingapp-ingress"
-    namespace = kubernetes_namespace.app.metadata[0].name
+    namespace = kubernetes_namespace.voting.metadata[0].name
     annotations = {
       "kubernetes.io/ingress.class" = "nginx"
     }
